@@ -18,6 +18,8 @@ class PlayerShip(Ship):
 		self.group_bullet = group_Bullet
 		self.last_update = pygame.time.get_ticks()
 		self.score = 0
+		self.blood = 100
+		self.lives = 4
 
 
 	def update(self):
@@ -28,10 +30,10 @@ class PlayerShip(Ship):
 		# verifica as colisões das laterais da tela com o player
 		if self.rect.left < 0:
 			self.rect.left = 0
-		if self.rect.top < 0:
-			self.rect.top = 0
-		if self.rect.bottom > HEIGHT:
-			self.rect.bottom = HEIGHT
+		if self.rect.top < HEIGHT_PANEL_PLAYER:
+			self.rect.top = HEIGHT_PANEL_PLAYER
+		if self.rect.bottom > HEIGHT_SCREEN:
+			self.rect.bottom = HEIGHT_SCREEN
 		
 
 	def control(self):
