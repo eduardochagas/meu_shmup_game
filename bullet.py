@@ -4,10 +4,11 @@ from constantes import *
 
 class Bullet(pygame.sprite.Sprite):
 
-	def __init__(self, width, height, RectMidRightOrRectMidLeft, velocity, LeftOrRight='right'):
+	def __init__(self, imgBullet, width, height, RectMidRightOrRectMidLeft, velocity, LeftOrRight='right'):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface((width, height))
-		self.image.fill(YELLOW)
+		# self.image = pygame.Surface((width, height))
+		# self.image.fill(YELLOW)
+		self.image = imgBullet
 		self.rect = self.image.get_rect()
 		self.LeftOrRight = LeftOrRight
 

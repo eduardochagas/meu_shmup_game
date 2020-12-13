@@ -1,14 +1,16 @@
 import pygame
 from constantes import *
-from ship import Ship
 from bullet import Bullet
 
-class PlayerShip(Ship):
 
-	def __init__(self, width, height, posX, posY, velocity, group_All_Sprites, group_Bullet):
+
+class PlayerShip(pygame.sprite.Sprite):
+
+	def __init__(self, imgBullet, width, height, posX, posY, velocity, group_All_Sprites, group_Bullet):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface((width, height))
-		self.image.fill(BLUE)
+		# self.image = pygame.Surface((width, height))
+		# self.image.fill(BLUE)
+		self.image = img_player1
 		self.rect = self.image.get_rect()
 		self.vec = pygame.math.Vector2(posX,posY)
 		self.rect.x = self.vec.x
@@ -20,6 +22,7 @@ class PlayerShip(Ship):
 		self.score = 0
 		self.blood = 100
 		self.lives = 4
+		self.imgBullet = imgBullet
 
 
 	def update(self):
@@ -53,13 +56,13 @@ class PlayerShip(Ship):
 
 		if keys[pygame.K_SPACE]:
 			now = pygame.time.get_ticks()
-			if now - self.last_update > 150:
+			if now - self.last_update > 600:
 				self.last_update = now 
 				self.shoot()
 
 
 	def shoot(self):
-		bullet = Bullet(10, 5, self.rect.midright, 10, 'right')
+		bullet = Bullet(self.imgBullet, 10, 5, self.rect.midright, 10, 'right')
 		self.group_all_sprites.add(bullet)
 		self.group_bullet.add(bullet)
 

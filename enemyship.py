@@ -1,12 +1,23 @@
 import pygame
 from constantes import *
 from bullet import Bullet
-from ship import Ship
 
-class EnemyShip(Ship):
+class EnemyShip(pygame.sprite.Sprite):
 
-	def __init__(self, width, height, posX, posY, velocity, group_All_Sprites, group_Bullet):
-		Ship.__init__(self, width, height, posX, posY, velocity, group_All_Sprites, group_Bullet)
+	def __init__(self, imgBullet, img, width, height, posX, posY, velocity, group_All_Sprites, group_Bullet):
+		pygame.sprite.Sprite.__init__(self)
+		# self.image = pygame.Surface((width, height))
+		# self.image.fill(BLUE)
+		self.image = img
+		self.rect = self.image.get_rect()
+		self.vec = pygame.math.Vector2(posX,posY)
+		self.rect.x = self.vec.x
+		self.rect.y = self.vec.y
+		self.velocity = velocity
+		self.group_all_sprites = group_All_Sprites
+		self.group_bullet = group_Bullet
+		self.last_update = pygame.time.get_ticks()
+		self.imgBullet = imgBullet
 
 
 
@@ -25,7 +36,7 @@ class EnemyShip(Ship):
 
 	def shoot(self):
 
-		bullet = Bullet(10, 5, self.rect.midleft, 10, 'left')
+		bullet = Bullet(self.imgBullet, 10, 5, self.rect.midleft, 10, 'left')
 		self.group_all_sprites.add(bullet)
 		self.group_bullet.add(bullet)
 
