@@ -30,18 +30,26 @@ class Bullet(pygame.sprite.Sprite):
 
 		if self.LeftOrRight == 'right':
 			self.rect.x += self.velocity
-			#
+			#########################################################################
 			# se a bala percorrer UMA DISTÂNCIA MAIOR que a largura da tela (WIDTH),
 			# a bala é removida da tela
 			#
 			if self.rect.left > WIDTH:
 				self.kill()
+
 		if self.LeftOrRight == 'left':
 			self.rect.x -= self.velocity
-
-			#
+			
+			########################################################
 			# se a bala percorrer UMA DISTÂNCIA MENOR que 0,
 			# a bala é removida da tela
 			#
 			if self.rect.left < 0:
 				self.kill()
+
+
+		##################################################################
+		# usado para gerar o pixel perfect, mas como a imagem é pequena,
+		#  mal dá pra ver a colisão perfeita
+		#
+		self.mask = pygame.mask.from_surface(self.image)

@@ -9,6 +9,7 @@ path_img = os.path.join(os.path.dirname(__file__), 'img')
 
 ##############################################
 # definindo o caminho até a imagem do player1
+#
 img_player1_orig = os.path.join(path_img, 'playerShip1_orange.png')
 load_img_player1 = pygame.image.load(img_player1_orig) # carrega a imagem do player1 no pygame
 img_player1 = pygame.transform.scale(load_img_player1, (40, 40)) # redimensiona o tamanho da imagem do player1
@@ -31,7 +32,8 @@ for i in range(1, 16):
 
 	img_laser = pygame.image.load(os.path.join(path_img, 'laserBlue'+str(i)+'.png'))
 	img_rotate = pygame.transform.rotate(img_laser, 90)
-	lasers_blue.append(img_rotate)
+	img_scaled = pygame.transform.scale(img_rotate, (30, 5))
+	lasers_blue.append(img_scaled)
 
 	img_laser = pygame.image.load(os.path.join(path_img, 'laserRed'+str(i)+'.png'))
 	img_rotate = pygame.transform.rotate(img_laser, 90)
@@ -121,18 +123,26 @@ for i in range(1,4):
 	array_tiny_meteors.append(img_meteor_scaled)
 
 
-
-# array_meteors['meteorMed'] = meteor_brown_med
-# array_meteors['meteorSmall'] = meteor_brown_small
-# array_meteors['meteorTiny'] = meteor_brown_tiny
-
-# print(dict_meteors)
-
-
 ###########################################
-#
+# imagens da esplosão
 #
 
+explosions = {}
+
+explosions_normal = []
+explosions_tiny = []
+
+for i in range(0, 9):
+
+	img_explosion = pygame.image.load(os.path.join(path_img, 'regularExplosion0'+str(i)+'.png'))
+	img_explosion_scaled_normal = pygame.transform.scale(img_explosion, (40, 40))
+	explosions_normal.append(img_explosion_scaled_normal)
+
+	img_explosion_scaled_tiny = pygame.transform.scale(img_explosion, (20, 20))
+	explosions_tiny.append(img_explosion_scaled_tiny)
+
+explosions['normal'] = explosions_normal
+explosions['tiny'] = explosions_tiny
 
 
 #CONSTANTES
@@ -168,8 +178,8 @@ VELOCITY_ENEMIES = 2
 # será a primeira onda inimiga
 wave1 = [ 
 			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_PANEL_PLAYER+60), VELOCITY_ENEMIES],
-			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+250, (HEIGHT_PANEL_PLAYER+180), VELOCITY_ENEMIES],
-			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_PANEL_PLAYER+300), VELOCITY_ENEMIES]
+			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+250, (HEIGHT_PANEL_PLAYER+210), VELOCITY_ENEMIES],
+			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_PANEL_PLAYER+340), VELOCITY_ENEMIES]
 		]
 
 ################################################################################
@@ -177,7 +187,8 @@ wave1 = [
 wave2 = [
 			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_SCREEN*30)/100, VELOCITY_ENEMIES],
 			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+450, (HEIGHT_SCREEN*45)/100, VELOCITY_ENEMIES],
-			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_SCREEN*60)/100, VELOCITY_ENEMIES]
+			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+350, (HEIGHT_SCREEN*60)/100, VELOCITY_ENEMIES],
+			[WIDTH_ENEMIES, HEIGTH_ENEMIES, WIDTH+450, (HEIGHT_SCREEN*80)/100, VELOCITY_ENEMIES],
 		]
 
 ################################################################################

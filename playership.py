@@ -23,9 +23,18 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.blood = 100
 		self.lives = 4
 		self.imgBullet = imgBullet
+		self.hidden = False
+		self.hidde_timer = 0
+		self.__distance_hidden_axis_x = 10000 
+
 
 
 	def update(self):
+
+		if self.hidden and pygame.time.get_ticks() - self.hide_timer > 1000:
+			self.hidden = False
+			self.rect.x = self.vec.x
+			self.rect.y = self.vec.y 
 
 		# são os controles de movimento do player
 		self.control()
@@ -37,7 +46,14 @@ class PlayerShip(pygame.sprite.Sprite):
 			self.rect.top = HEIGHT_PANEL_PLAYER
 		if self.rect.bottom > HEIGHT_SCREEN:
 			self.rect.bottom = HEIGHT_SCREEN
-		
+
+
+		##################################################################
+		# usado para gerar o pixel perfect, mas como a imagem é pequena,
+		#  mal dá pra ver a colisão perfeita
+		#
+		self.mask = pygame.mask.from_surface(self.image)
+
 
 	def control(self):
 		keys = pygame.key.get_pressed()
@@ -56,7 +72,7 @@ class PlayerShip(pygame.sprite.Sprite):
 
 		if keys[pygame.K_SPACE]:
 			now = pygame.time.get_ticks()
-			if now - self.last_update > 600:
+			if now - self.last_update > 400:
 				self.last_update = now 
 				self.shoot()
 
@@ -67,3 +83,7 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.group_bullet.add(bullet)
 
 
+	def hide(self):
+		self.hidden = True
+		self.hide_timer = pygame.time.get_ticks()
+		self.rect.center = (self.__distance_hidden_axis_x, HEIGHT)

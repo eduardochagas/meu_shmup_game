@@ -5,6 +5,7 @@ from playership import PlayerShip
 from enemyship import EnemyShip
 from meteor import Meteor
 from tinymeteor import Tinymeteor
+from explosion import Explosion
 
 
 
@@ -21,7 +22,7 @@ class Game:
 		self.all_sprites = pygame.sprite.Group()
 		self.bullet_player1 = pygame.sprite.Group()
 
-		self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
+		self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT_SCREEN)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
 		self.all_sprites.add(self.player1)
 
 		#####################################################################
@@ -34,15 +35,9 @@ class Game:
 		# cria a primeira onda inimiga 1
 		self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0] ,img=dict_enemies['blue'][0], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy1, groupEnemy=self.group_enemy1)
 
-		#self.meteor = Meteor(WIDTH, HEIGHT/2)
-		#self.all_sprites.add(self.meteor)
 
 		# self.wave_meteor = False
 		self.wave1_meteor = pygame.sprite.Group()
-
-
-		
-
 
 		# controla as ondas de ataque
 		self.num_waves = 1
@@ -63,7 +58,8 @@ class Game:
 			##################################################################
 			# desenha o nome do jogador na tela do jogo junto com o sangue do jogador
 			self.textNamePlayer(self.screen, 10, 10, 'Player1', 20, YELLOW, self.player1.blood)
-
+			##################################################################
+			# exibe o número de onda inimiga que está atacando no momento 
 			self.showNumWave(self.screen, WIDTH/2, 30, 'Wave: '+str(self.num_waves), 20, YELLOW)
 
 			# fecha a tela do jogo
@@ -82,40 +78,57 @@ class Game:
 
 
 			if self.num_waves == 1:
-				#################################################################################
-				# chaca a colisão do player1 com OS INIMIGOS da primeira onda inimiga do jogo
-				# OBS: se qualquer um dos inimigos acertar o player, e o parâmetro boleano  
-				# for igual a True, o inimigo que colidiu com o player é removido da tela
-				# OBS2: o valor que a variável hit recebe é o objeto inimigo (no caso desse jogo,
-				# o objeto inimigo é o meteoro)
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.group_enemy1, False)
-				if hit_enemy:
-					pass
 
 				#################################################################################
-				# chaca a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy1, True)
-				if hit_enemy:
-					self.player1.blood -= random.randrange(5, 10)
+				# checa a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
+				# 
+				hit_bullet_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy1, True, pygame.sprite.collide_mask)
+				########################################################################
+				# para cada uma das balas do array hit_bullet_enemy...
+				#
+				for bullet in hit_bullet_enemy:
+					self.player1.blood -= random.randrange(2, 4)
+					################################################################################
+					# define uma explosão do tipo pequena quando a bala colide com a nave do player
+					#
+					expl = Explosion(bullet.rect.center, 'tiny')
+					self.all_sprites.add(expl)
+					############################################
+					# se o sangue do player acabar...
+					#
 					if self.player1.blood <= 0:
 						self.player1.blood = 0
-						print('jogo perdido !!!!')
+						###################################################
+						# atribui a imagem do player na classe de explosão
+						expl = Explosion(self.player1.rect.center, 'normal') 
+						self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+						self.player1.hide() # esconde a imagem do player, da tela do pygame
 
 				################################################################
 				# checa a colisão das balas do player com as balas dos inimigos
+				#
 				hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy1, True, True)
-				if hit_enemy:
+				####################################
+				# se a colisão for verdadeira...
+				#
+				for enemy in hit_enemy:
 					self.player1.score += 1
+					################################################
+					# explode a nave inimiga
+					#
+					expl = Explosion(enemy.rect.center, 'normal')
+					self.all_sprites.add(expl)
 
 				#################################################################################
 				# se não houver mais inimigos no grupo da primeira onda inimiga...
+				#
 				if len(self.group_enemy1) == 0:
 					self.num_waves = 2 # muda para a segunda onda inimiga
 					self.group_enemy2 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
 					self.bullet_enemy2 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
 					####################################################
 					# cria os meteoros na tela do jogo
-					self.createMeteors(3, self.wave1_meteor, self.all_sprites)
+					self.createMeteors(7, self.wave1_meteor, self.all_sprites)
 					####################################################
 					# cria a segunda onda inimiga: wave2
 					self.createEnemies(imgBullet=dict_lasers['lasers_blue'][1],img=dict_enemies['red'][0], listWave=wave2, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy2, groupEnemy=self.group_enemy2)
@@ -129,21 +142,63 @@ class Game:
 
 				#################################################################################
 				# chaca a colisão do player1 com OS METEOROS da segunda onda inimiga do jogo
-				hit = pygame.sprite.spritecollide(self.player1, self.wave1_meteor, True)
-				for hit_enemy in hit:
-					# print(hit_enemy.radius)
-					self.player1.blood -= hit_enemy.radius 
+				#   OBS: o método spritecollide RETORNA UMA LISTA DE OBJETOS (nesse caso, SÃO 
+				#   OS METEÓROS)
+				#
+				hit_meteors = pygame.sprite.spritecollide(self.player1, self.wave1_meteor, True, pygame.sprite.collide_mask)
+				########################################################################
+				# para cada meteoro da lista...
+				#
+				for hit_meteor in hit_meteors:
+					################################################
+					# tira o sangue do player baseado no raio do meteoro
+					#
+					self.player1.blood -= hit_meteor.radius
+					################################################################
+					# define a explosão pequena na colisão do player com o meteoro
+					# e adiciona ao grupo: self.all_sprites
+					#
+					expl = Explosion(hit_meteor.rect.center, 'tiny')
+					self.all_sprites.add(expl)
+					################################################################
+					# se o sangue da nave do player for igual ou menor que zero....
+					#
+					if self.player1.blood <= 0:
+						self.player1.blood = 0
+						###################################################
+						# atribui a imagem do player na classe de explosão,
+						# ou seja, as imagens de explosão vao espawnar onde 
+						# a POSIÇÂO DA IMAGEM DO PLAYER ESTAVA NA TELA.
+						#
+						#  OBS: as imagens da explosão NÃO FICAM ATRELADAS A
+						#  IMAGEM DO PLAYER, ela fica atrelada Á POSIÇÃO
+						#  EM QUE A IMAGEM DO PLAYER ESTAVA NA TELA DO JOGO,
+						#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
+						#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
+						#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
+						expl = Explosion(self.player1.rect.center, 'normal') 
+						self.all_sprites.add(expl) # adiciona a classe explosão em: self.all_sprites
+						self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
+						
 
 				#################################################################3
 				# colisão das balas do player1 com os meteoros...
+				#
 				hit = pygame.sprite.groupcollide(self.bullet_player1, self.wave1_meteor, True, True)
 				for hit_meteor in hit:
+					################################################################
+					# define a explosão pequena na colisão do player com o meteoro
+					# e adiciona ao grupo: self.all_sprites
+					#
+					expl = Explosion(hit_meteor.rect.center, 'tiny')
+					self.all_sprites.add(expl)
 					########################################################
 					# cria os meteoros minusculos a partir do momento que 
 					# atiramos no meteoro grande.
 					# os valores: (5, 7, -5, 5) e (5, 7, 5, 6) são referentes a 
 					# posição em que os meteóros minúsculos percorrerão na tela 
 					# quando atingimos o meteoro grande...
+					#
 					tinymeteor1 = Tinymeteor(hit_meteor.rect.center, 5, 7, -5, 5)
 					tinymeteor2 = Tinymeteor(hit_meteor.rect.center, 5, 7, 5, 6)
 					################################################################
@@ -155,48 +210,109 @@ class Game:
 
 
 				#################################################################################
-				# chaca a colisão do player1 com OS INIMIGOS da primeira onda inimiga do jogo
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.group_enemy2, False)
-				if hit_enemy:
-					pass
-
-				#################################################################################
-				# chaca a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy2, True)
-				if hit_enemy:
-					self.player1.blood -= random.randrange(5, 10)
+				# checa a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
+				#
+				hit_bullet_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy2, True)
+				######################################################################
+				# para cada bala inimiga acertada na nave do player...				#
+				#
+				for enemy in hit_bullet_enemy:
+					self.player1.blood -= random.randrange(2, 4)
+					#############################################################################
+					# define uma explosão pequena na colisão da bala inimiga com a nave do player
+					#
+					expl = Explosion(enemy.rect.center, 'tiny')
+					self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+					################################################################
+					# se o sangue da nave do player for igual ou menor que zero....
+					#
 					if self.player1.blood <= 0:
 						self.player1.blood = 0
-						print('jogo perdido !!!!')
+						###################################################
+						# atribui a imagem do player na classe de explosão,
+						# ou seja, as imagens de explosão vao espawnar onde 
+						# a POSIÇÂO DA IMAGEM DO PLAYER ESTAVA.
+						#
+						#  OBS: as imagens da explosão NÃO FICAM ATRELADAS A
+						#  IMAGEM DO PLAYER, ela fica atrelada Á ÚLTIMA POSIÇÃO
+						#  EM QUE A IMAGEM DO PLAYER ESTAVA NA TELA DO JOGO,
+						#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
+						#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
+						#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
+						expl = Explosion(self.player1.rect.center, 'normal')
+						self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites 
+						self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
+						
 
 				################################################################
 				# checa a colisão das balas do player com as balas dos inimigos
 				hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy2, True, True)
-				if hit_enemy:
+				for enemy in hit_enemy:
 					self.player1.score += 1
+					################################################
+					# explode a nave inimiga
+					#
+					expl = Explosion(enemy.rect.center, 'normal')
+					self.all_sprites.add(expl)
 
-
-				if len(self.group_enemy2) == 0:
+				#################################################################################
+				# se não houver mais inimigos no grupo da segunda onda inimiga...
+				#
+				if len(self.group_enemy2) == 0 and len(self.wave1_meteor) == 0:
 					self.num_waves = 3
 					self.group_enemy3 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
 					self.bullet_enemy3 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
+					####################################################################
 					# cria a terceira onda inimiga: wave3
+					#
 					self.createEnemies(imgBullet=dict_lasers['lasers_blue'][4], img=dict_enemies['blue'][3], listWave=wave3, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy3, groupEnemy=self.group_enemy3)
 
 
 			if self.num_waves == 3:
 
 				#################################################################################
-				# chaca a colisão do player1 com OS METEOROS da segunda onda inimiga do jogo
-				hit = pygame.sprite.spritecollide(self.player1, self.wave1_meteor, True)
-				for hit_enemy in hit:
-					# print(hit_enemy.radius)
-					self.player1.blood -= hit_enemy.radius 
+				# checa a colisão do player1 com OS METEOROS QUE RESTOU DA SEGUNDA ONDA INIMIGA No jogo
+				#
+				hit_meteors = pygame.sprite.spritecollide(self.player1, self.wave1_meteor, True, pygame.sprite.collide_mask)
+				####################################################
+				# checa a colisão com cada meteoro da lista...
+				#
+				for hit_enemy in hit_meteors:
+					########################################################
+					# tira o sangue do player baseado no raio do meteoro
+					#
+					self.player1.blood -= hit_enemy.radius
+					#####################################################
+					# se o sangue do player for menor ou igual a zero...
+					#
+					if self.player1.blood <= 0:
+						self.player1.blood = 0
+						###################################################
+						# atribui a imagem do player na classe de explosão,
+						# ou seja, as imagens de explosão vao espawnar onde 
+						# a POSIÇÂO DA IMAGEM DO PLAYER ESTAVA.
+						#
+						#  OBS: as imagens da explosão NÃO FICAM ATRELADAS A
+						#  IMAGEM DO PLAYER, ela fica atrelada Á ÚLTIMA POSIÇÃO
+						#  EM QUE A IMAGEM DO PLAYER ESTAVA NA TELA DO JOGO,
+						#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
+						#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
+						#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
+						expl = Explosion(self.player1.rect.center) 
+						self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+						self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
+						
 
 				#################################################################3
 				# colisão das balas do player1 com os meteoros...
 				hit = pygame.sprite.groupcollide(self.bullet_player1, self.wave1_meteor, True, True)
 				for hit_meteor in hit:
+					################################################################
+					# define a explosão pequena na colisão do player com o meteoro
+					# e adiciona ao grupo: self.all_sprites
+					#
+					expl = Explosion(hit_meteor.rect.center, 'tiny')
+					self.all_sprites.add(expl)
 					########################################################
 					# cria os meteoros minusculos a partir do momento que 
 					# atiramos no meteoro grande.
@@ -214,28 +330,49 @@ class Game:
 
 
 				#################################################################################
-				# chaca a colisão do player1 com OS INIMIGOS da primeira onda inimiga do jogo
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.group_enemy3, False)
-				if hit_enemy:
-					pass
-
-				#################################################################################
-				# chaca a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy3, True)
-				if hit_enemy:
+				# checa a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
+				#
+				hit_bullet_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy3, True)
+				#######################################################################################
+				# checa a colisão da nave do player com cada bala inimiga no array: hit_bullet_enemy
+				#
+				for bullet in hit_bullet_enemy:						
 					self.player1.blood -= random.randrange(5, 10)
+					#####################################################
+					# se o sangue do player for menor ou igual a zero...
+					#
 					if self.player1.blood <= 0:
 						self.player1.blood = 0
-						print('jogo perdido !!!!')
+						###################################################
+						# atribui a imagem do player na classe de explosão,
+						# ou seja, as imagens de explosão vao espawnar onde 
+						# a POSIÇÂO DA IMAGEM DO PLAYER ESTAVA.
+						#
+						#  OBS: as imagens da explosão NÃO FICAM ATRELADAS A
+						#  IMAGEM DO PLAYER, ela fica atrelada Á ÚLTIMA POSIÇÃO
+						#  EM QUE A IMAGEM DO PLAYER ESTAVA NA TELA DO JOGO,
+						#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
+						#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
+						#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
+						expl = Explosion(self.player1.rect.center, 'normal') 
+						self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+						self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
+						
 
 				################################################################
 				# checa a colisão das balas do player com as balas dos inimigos
+				#
 				hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy3, True, True)
-				if hit_enemy:
+				for enemy in hit_enemy:
 					self.player1.score += 1
+					################################################
+					# explode a nave inimiga
+					#
+					expl = Explosion(enemy.rect.center, 'normal')
+					self.all_sprites.add(expl)
 
-				##################################3
-				# implementando aqui.......
+				#################################################################################
+				# se não houver mais inimigos no grupo da terceira onda inimiga...
 				#
 				if len(self.group_enemy3) == 0:
 					self.num_waves = 4
@@ -246,27 +383,7 @@ class Game:
 
 
 			if self.num_waves == 4:
-
-				#################################################################################
-				# chaca a colisão do player1 com OS INIMIGOS da primeira onda inimiga do jogo
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.group_enemy4, False)
-				if hit_enemy:
-					pass
-
-				#################################################################################
-				# chaca a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
-				hit_enemy = pygame.sprite.spritecollide(self.player1, self.bullet_enemy4, True)
-				if hit_enemy:
-					self.player1.blood -= random.randrange(5, 10)
-					if self.player1.blood <= 0:
-						self.player1.blood = 0
-						print('jogo perdido !!!!')
-
-				################################################################
-				# checa a colisão das balas do player com as balas dos inimigos
-				hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy4, True, True)
-				if hit_enemy:
-					self.player1.score += 1
+				print('parei aqui !!!')
 
 
 
@@ -279,15 +396,6 @@ class Game:
 			# atualiza a tela do jogo
 			pygame.display.update()
 
-
-	def createEnemies(self, imgBullet, img, listWave, groupAll_sprites, groupBullet, groupEnemy):
-
-		for lista in listWave:
-			for item in range(len(lista)):
-				print(item)
-				e = EnemyShip(imgBullet, img, lista[0], lista[1], lista[2], lista[3], lista[4], groupAll_sprites, groupBullet)
-				groupEnemy.add(e) # adiciona o inimigo ao grupo de inimigo correspondente
-				groupAll_sprites.add(e) # adiciona o inimigo ao grupo que contêm todos os objetos do jogo
 
 
 	def createPanelPlayer(self, screen):
@@ -363,12 +471,6 @@ class Game:
 			self.player1.lives -= 1
 			self.player1.blood = 100
 
-	def createMeteors(self, num, groupMeteor, all_sprites):
-
-		for i in range(num):
-			m = Meteor(array_meteors, random.randrange(WIDTH, WIDTH+800), random.randrange(HEIGHT_PANEL_PLAYER, HEIGHT))
-			groupMeteor.add(m)
-			all_sprites.add(m)
 
 	def showNumWave(self, screen, posX, posY, text, sizeText, color):
 		font_default = pygame.font.get_default_font()
@@ -376,17 +478,24 @@ class Game:
 		font_render = font.render(text, False, color)
 		rect = font_render.get_rect()
 		screen.blit(font_render, (posX, posY))
+
 			
+	def createEnemies(self, imgBullet, img, listWave, groupAll_sprites, groupBullet, groupEnemy):
+
+		for lista in listWave:
+			for item in range(len(lista)):
+				print(item)
+				e = EnemyShip(imgBullet, img, lista[0], lista[1], lista[2], lista[3], lista[4], groupAll_sprites, groupBullet)
+				groupEnemy.add(e) # adiciona o inimigo ao grupo de inimigo correspondente
+				groupAll_sprites.add(e) # adiciona o inimigo ao grupo que contêm todos os objetos do jogo
 
 
+	def createMeteors(self, num, groupMeteor, all_sprites):
 
-
-
-
-
-
-
-
+		for i in range(num):
+			m = Meteor(array_meteors, random.randrange(WIDTH, WIDTH+800), random.randrange(HEIGHT_PANEL_PLAYER, HEIGHT))
+			groupMeteor.add(m)
+			all_sprites.add(m)
 
 # inicia o jogo
 if __name__ == '__main__':

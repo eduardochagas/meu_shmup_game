@@ -9,7 +9,6 @@ class Meteor(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.image_orig = random.choice(arrayMeteor) # escolhe aleatóriamente uma imagem no array
 		self.image = self.image_orig.copy()
-		# self.image.fill(RED)
 		self.rect = self.image.get_rect()
 		self.vec = pygame.math.Vector2(x, y)
 		self.rect.x = self.vec[0]
@@ -58,6 +57,15 @@ class Meteor(pygame.sprite.Sprite):
 			# atribuimos ao centro da imagem rotacionada ( que é a imagem em: self.image.orig )
 			#
 			self.rect.center = old_center
+
+			if self.rect.x < -300:
+				self.kill()
+
+			##################################################################
+			# usado para gerar o pixel perfect, mas como a imagem é pequena,
+			#  mal dá pra ver a colisão perfeita
+			#
+			self.mask = pygame.mask.from_surface(self.image)
 
 
 

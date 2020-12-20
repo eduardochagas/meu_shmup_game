@@ -30,9 +30,15 @@ class EnemyShip(pygame.sprite.Sprite):
 			self.last_update = now 
 			self.shoot()
 
-		if self.rect.right < -500:
+		if self.rect.right < -300:
 			self.kill()
 
+
+		##################################################################
+		# usado para gerar o pixel perfect, mas como a imagem é pequena,
+		#  mal dá pra ver a colisão perfeita
+		#
+		self.mask = pygame.mask.from_surface(self.image)
 
 	def shoot(self):
 
