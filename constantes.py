@@ -15,14 +15,35 @@ load_img_player1 = pygame.image.load(img_player1_orig) # carrega a imagem do pla
 img_player1 = pygame.transform.scale(load_img_player1, (40, 40)) # redimensiona o tamanho da imagem do player1
 
 img_laser = os.path.join(path_img, 'laserRed7.png')
-load_laser_player1 = pygame.image.load(img_laser)
-img_laser_player1 = pygame.transform.rotate(load_laser_player1, -90)
+load_laser = pygame.image.load(img_laser)
+img_laser_rotate = pygame.transform.rotate(load_laser, -90)
+img_laser_player1 = pygame.transform.scale(img_laser_rotate, (37, 12))
 
 img_life_player1 = pygame.image.load(img_player1_orig)
 img_life_player1_scaled = pygame.transform.scale(img_life_player1, (30, 30))
 img_life_player_mini = pygame.transform.rotate(img_life_player1_scaled, 90)
 
+##############################################
+# carregando as imagens do raio e do escudo
+# (são as imagens dos poderes do player)
+#
+powers = {}
 
+path_img_bolt = os.path.join(path_img, 'bolt_gold.png')
+img_bolt = pygame.image.load(path_img_bolt)
+
+path_img_blood = os.path.join(path_img, 'shield_gold.png')
+img_blood = pygame.image.load(path_img_blood)
+
+powers['gun'] = img_bolt
+powers['blood'] = img_blood 
+
+
+
+############################################################
+# dicionário para armazenar os arrays que contem as imagens 
+# dos lasers...
+#
 dict_lasers = {}
 
 lasers_blue = []
@@ -32,7 +53,7 @@ for i in range(1, 16):
 
 	img_laser = pygame.image.load(os.path.join(path_img, 'laserBlue'+str(i)+'.png'))
 	img_rotate = pygame.transform.rotate(img_laser, 90)
-	img_scaled = pygame.transform.scale(img_rotate, (30, 5))
+	img_scaled = pygame.transform.scale(img_rotate, (37, 12))
 	lasers_blue.append(img_scaled)
 
 	img_laser = pygame.image.load(os.path.join(path_img, 'laserRed'+str(i)+'.png'))
@@ -168,6 +189,9 @@ FPS = 50
 # ALTURA TAMANHO PAINEL DO PLAYER
 HEIGHT_PANEL_PLAYER = 120
 HEIGHT_SCREEN = HEIGHT_PANEL_PLAYER + HEIGHT
+
+# tempo em que o poder do powerup do tiro duplo ficará ativo
+TIME_POWERUP = 2000
 
 #ONDA DE ATAQUE INIMIGA
 WIDTH_ENEMIES = 20

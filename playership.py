@@ -27,10 +27,34 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.hidde_timer = 0
 		self.__distance_hidden_axis_x = 10000 
 
+		self.power_time = pygame.time.get_ticks()
+		self.shoot_player = 1
+		
+
 
 
 	def update(self):
 
+		###########################################################
+		# verifica se o valor de self.shoot_player (que é a variável
+		# que faz o controle da troca de tiro) foi trocado para 2 e
+		# faz o controle de quanto tempo vamos permanecer
+		# com o tiro duplo.
+		#
+		#	OBS: repare que o atributo: self.power_time que foi 
+		#   executado no método: double_shoot_player(), foi usado aqui 
+		#   para fazermos o controle do tempo em milisegundos em que
+		#   ficaremos com o tiro duplo...
+		#
+		if self.shoot_player == 2 and pygame.time.get_ticks() - self.power_time > TIME_POWERUP:
+			self.shoot_player = 1 # volta o tiro da nave para 1 tiro
+			self.power_time = pygame.time.get_ticks() # define um novo valor em milisegundos á self.power_time
+
+
+		###################################################
+		# controla o tempo em que a nave ficará escondida
+		# a cada vez que perdemos uma vida...
+		#
 		if self.hidden and pygame.time.get_ticks() - self.hide_timer > 1000:
 			self.hidden = False
 			self.rect.x = self.vec.x
@@ -78,9 +102,38 @@ class PlayerShip(pygame.sprite.Sprite):
 
 
 	def shoot(self):
-		bullet = Bullet(self.imgBullet, 10, 5, self.rect.midright, 10, 'right')
-		self.group_all_sprites.add(bullet)
-		self.group_bullet.add(bullet)
+		if self.shoot_player == 1:
+			bullet = Bullet(self.imgBullet, 10, 5, self.rect.midright, 10, 'right')
+			self.group_all_sprites.add(bullet)
+			self.group_bullet.add(bullet)
+
+		if self.shoot_player >= 2:
+			bullet1 = Bullet(self.imgBullet, 10, 5, self.rect.midtop, 10, 'right')
+			bullet2 = Bullet(self.imgBullet, 10, 5, self.rect.midbottom, 10, 'right')
+			self.group_all_sprites.add(bullet1)
+			self.group_all_sprites.add(bullet2)
+			self.group_bullet.add(bullet1)
+			self.group_bullet.add(bullet2)
+
+
+	def double_shoot_player(self):
+
+		#########################################################
+		# troca o valor da variável que controla a troca de tiros 
+		# para 2 
+		#
+		self.shoot_player += 1
+		###########################################
+		# define um tempo em milisegundos
+		#   OBS: vamos usa-lo no método update() dessa 
+		#   classe para fazermos o controle de quanto
+		#   tempo vamos poder permanecer com o tiro duplo
+		#
+		self.power_time = pygame.time.get_ticks() 
+
+
+
+	
 
 
 	def hide(self):

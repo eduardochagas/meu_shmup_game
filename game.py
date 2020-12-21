@@ -6,6 +6,7 @@ from enemyship import EnemyShip
 from meteor import Meteor
 from tinymeteor import Tinymeteor
 from explosion import Explosion
+from powerupshoot import PowerupShoot
 
 
 
@@ -24,6 +25,11 @@ class Game:
 
 		self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT_SCREEN)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
 		self.all_sprites.add(self.player1)
+
+		####################################
+		# 
+		#
+		self.powerupsPlayer1 = pygame.sprite.Group()
 
 		#####################################################################
 		# cria os grupos dos primeiros inimigos
@@ -186,6 +192,8 @@ class Game:
 				#
 				hit = pygame.sprite.groupcollide(self.bullet_player1, self.wave1_meteor, True, True)
 				for hit_meteor in hit:
+					# p = PowerShoot(hit_meteor.rect.center)
+					# self.all_sprites.add(p)
 					################################################################
 					# define a explosão pequena na colisão do player com o meteoro
 					# e adiciona ao grupo: self.all_sprites
@@ -206,7 +214,28 @@ class Game:
 					#
 					self.all_sprites.add(tinymeteor1)
 					self.all_sprites.add(tinymeteor2)
-					
+
+					#####################################################################
+					# se o valor aleatório de random.random() for maior do que 0.8 (ou seja,
+					# tem 20 por cento de chance dos poderes aparecerem
+					#					
+					if random.random() > 0.7:
+						power = PowerupShoot(hit_meteor.rect.center)
+						self.powerupsPlayer1.add(power)
+						self.all_sprites.add(power)
+
+
+				########################################################
+				# faz a colisão do player com as imagens dos powerups
+				#
+				hit_powers = pygame.sprite.spritecollide(self.player1, self.powerupsPlayer1, True)
+				
+				for power in hit_powers:
+					if power.type == 'blood': # se o tipo do powerup tiver esse nome...
+						if self.player1.blood < 100: # se o sangue do player for menor que 100...
+							self.player1.blood += random.randrange(10, 15)
+					if power.type == 'gun': # se o tipo do powerup tiver esse nome...
+						self.player1.double_shoot_player()
 
 
 				#################################################################################
@@ -259,7 +288,8 @@ class Game:
 				# se não houver mais inimigos no grupo da segunda onda inimiga...
 				#
 				if len(self.group_enemy2) == 0 and len(self.wave1_meteor) == 0:
-					self.num_waves = 3
+					self.num_waves = 3 # troca para a nova onda inimiga
+					self.player1.shoot_player = 1 # RETORNA PARA O TIRO INDIVIDUAL da nave do player
 					self.group_enemy3 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
 					self.bullet_enemy3 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
 					####################################################################
@@ -329,6 +359,20 @@ class Game:
 
 
 
+				########################################################
+				# faz a colisão do player com as imagens dos powerups
+				#
+				hit_powers = pygame.sprite.spritecollide(self.player1, self.powerupsPlayer1, True)
+				
+				for power in hit_powers:
+					if power.type == 'blood': # se o tipo do powerup tiver esse nome...
+						if self.player1.blood < 100: # se o sangue do player for menor que 100...
+							self.player1.blood += random.randrange(10, 15)
+					if power.type == 'gun': # se o tipo do powerup tiver esse nome...
+						self.player1.double_shoot_player()
+
+
+
 				#################################################################################
 				# checa a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
 				#
@@ -376,14 +420,13 @@ class Game:
 				#
 				if len(self.group_enemy3) == 0:
 					self.num_waves = 4
-					self.group_enemy4 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
-					self.bullet_enemy4 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
-					# cria a terceira onda inimiga: wave3
-					self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0], img=dict_enemies['red'][1], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy4, groupEnemy=self.group_enemy4)
+					# self.group_enemy4 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
+					# self.bullet_enemy4 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
+					# # cria a terceira onda inimiga: wave3
+					# self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0], img=dict_enemies['red'][1], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy4, groupEnemy=self.group_enemy4)
 
 
-			if self.num_waves == 4:
-				print('parei aqui !!!')
+
 
 
 
@@ -484,7 +527,7 @@ class Game:
 
 		for lista in listWave:
 			for item in range(len(lista)):
-				print(item)
+				#print(item)
 				e = EnemyShip(imgBullet, img, lista[0], lista[1], lista[2], lista[3], lista[4], groupAll_sprites, groupBullet)
 				groupEnemy.add(e) # adiciona o inimigo ao grupo de inimigo correspondente
 				groupAll_sprites.add(e) # adiciona o inimigo ao grupo que contêm todos os objetos do jogo

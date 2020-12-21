@@ -4,7 +4,7 @@ from constantes import *
 
 class Bullet(pygame.sprite.Sprite):
 
-	def __init__(self, imgBullet, width, height, RectMidRightOrRectMidLeft, velocity, LeftOrRight='right'):
+	def __init__(self, imgBullet, width, height, RectMid, velocity, LeftOrRight='right'):
 		pygame.sprite.Sprite.__init__(self)
 		# self.image = pygame.Surface((width, height))
 		# self.image.fill(YELLOW)
@@ -12,19 +12,26 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.LeftOrRight = LeftOrRight
 
-		# se o parametro LeftOrRight receber o valor 'right',
+		#####################################################
+		# se o parametro LeftOrRight receber o valor: 'right',
 		# o lado esquerdo da bala recebe o centro do lado direito 
 		# do character (que pode ser o player ou o inimigo)
 		if self.LeftOrRight == 'right':
-			self.rect.midleft = RectMidRightOrRectMidLeft
-		# se o parametro LeftOrRight receber o valor 'left',
+			self.rect.midleft = RectMid
+
+		#####################################################
+		# se o parametro LeftOrRight receber o valor: 'left',
 		# o lado esquerdo da bala recebe o centro do lado esquerdo 
 		# do character (que pode ser o player ou o inimigo)
 		if self.LeftOrRight == 'left':
-			self.rect.midright = RectMidRightOrRectMidLeft
+			self.rect.midright = RectMid
 
-		self.vec = pygame.math.Vector2(velocity, 0)
-		self.velocity = self.vec.x
+		#######################################
+		# define a velocidade da bala do player
+		# e do inimigo
+		#
+		self.velocity = 10 
+
 
 	def update(self):
 
@@ -37,6 +44,7 @@ class Bullet(pygame.sprite.Sprite):
 			if self.rect.left > WIDTH:
 				self.kill()
 
+
 		if self.LeftOrRight == 'left':
 			self.rect.x -= self.velocity
 			
@@ -46,6 +54,7 @@ class Bullet(pygame.sprite.Sprite):
 			#
 			if self.rect.left < 0:
 				self.kill()
+
 
 
 		##################################################################
