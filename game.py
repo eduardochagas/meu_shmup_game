@@ -37,22 +37,32 @@ class Game:
 		#
 		self.group_enemy1 = pygame.sprite.Group()
 		self.bullet_enemy1 = pygame.sprite.Group() 
-		#
+		##############################################
 		# cria a primeira onda inimiga 1
+		#
 		self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0] ,img=dict_enemies['blue'][0], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy1, groupEnemy=self.group_enemy1)
-
-
-		# self.wave_meteor = False
+		###########################################################
+		# grupo que armazena a primeira onda de meteoros do jogo
+		#
 		self.wave1_meteor = pygame.sprite.Group()
-
-		# controla as ondas de ataque
+		########################################################
+		# variáveis que controlam as ondas de ataque inimigas
+		#
+		self.show_enemies_new_wave = False
 		self.num_waves = 1
+		#####################################################
+		# variável de controle do loop principal do jogo
+		#		
 		self.running = True
+		#######################################
+		# executa o loop do jogo
 		self.loop()
 
 	
 	def loop(self):
 
+		#############################
+		# loop principal do jogo
 		while self.running:
 
 			########################################
@@ -68,6 +78,7 @@ class Game:
 			# exibe o número de onda inimiga que está atacando no momento 
 			self.showNumWave(self.screen, WIDTH/2, 30, 'Wave: '+str(self.num_waves), 20, YELLOW)
 
+			#######################################
 			# fecha a tela do jogo
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -82,7 +93,8 @@ class Game:
 			# chama todos os métodos update() de cada objeto do grupo self.all_sprites
 			self.all_sprites.update()
 
-
+			#############################
+			# primeira onda inimiga
 			if self.num_waves == 1:
 
 				#################################################################################
@@ -115,10 +127,10 @@ class Game:
 				#
 				hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy1, True, True)
 				####################################
-				# se a colisão for verdadeira...
+				# para cada inimigo em self.group_enemy1...
 				#
 				for enemy in hit_enemy:
-					self.player1.score += 1
+					self.player1.score += 1 # aumenta 1 ponto para o player1
 					################################################
 					# explode a nave inimiga
 					#
@@ -129,21 +141,42 @@ class Game:
 				# se não houver mais inimigos no grupo da primeira onda inimiga...
 				#
 				if len(self.group_enemy1) == 0:
-					self.num_waves = 2 # muda para a segunda onda inimiga
-					self.group_enemy2 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
-					self.bullet_enemy2 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
-					####################################################
-					# cria os meteoros na tela do jogo
-					self.createMeteors(7, self.wave1_meteor, self.all_sprites)
-					####################################################
-					# cria a segunda onda inimiga: wave2
-					self.createEnemies(imgBullet=dict_lasers['lasers_blue'][1],img=dict_enemies['red'][0], listWave=wave2, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy2, groupEnemy=self.group_enemy2)
-					####################################################
-					# cria os meteoros na tela do jogo
-					self.createMeteors(5, self.wave1_meteor, self.all_sprites)
+					
+					########################################################
+					# variável de controle para a criação das ondas inimigas
+					self.show_enemies_new_wave = True
+					########################################################
+					# muda para a segunda onda inimiga 
+					self.num_waves = 2 
 
-			#################################################################################
-			# se a onda inimiga for a segunda onda...			
+			############################################################
+			# se a variável de controle: self.show_enemies_new_wave, for 
+			# verdadeira e self.num_waves tiver o valor: 2....
+			if self.show_enemies_new_wave == True and self.num_waves == 2:
+
+				############################################################
+				# cria todos os objetos referente a segunda onda inimiga
+				#
+				self.group_enemy2 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
+				self.bullet_enemy2 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
+				####################################################
+				# cria os meteoros na tela do jogo
+				self.createMeteors(7, self.wave1_meteor, self.all_sprites)
+				####################################################
+				# cria a segunda onda inimiga: wave2
+				self.createEnemies(imgBullet=dict_lasers['lasers_blue'][1],img=dict_enemies['red'][0], listWave=wave2, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy2, groupEnemy=self.group_enemy2)
+				####################################################
+				# cria os meteoros na tela do jogo
+				self.createMeteors(5, self.wave1_meteor, self.all_sprites)
+				####################################################
+				# temos que configurar a variável de controle para False
+				# quando criamos todos os inimigos na tela do pygame
+				self.show_enemies_new_wave = False
+
+
+			################################################################################
+			# se a onda inimiga for a segunda onda...	
+			#		
 			if self.num_waves == 2:
 
 				#################################################################################
@@ -153,8 +186,10 @@ class Game:
 				#
 				hit_meteors = pygame.sprite.spritecollide(self.player1, self.wave1_meteor, True, pygame.sprite.collide_mask)
 				########################################################################
-				# para cada meteoro da lista...
-				#
+				# para cada meteoro do grupo: self.wave1_meteor...
+				#   OBS: o valor retornado do metodo spritecollide é uma lista de
+				#   objetos (classes) de meteoro.
+
 				for hit_meteor in hit_meteors:
 					################################################
 					# tira o sangue do player baseado no raio do meteoro
@@ -216,7 +251,7 @@ class Game:
 					self.all_sprites.add(tinymeteor2)
 
 					#####################################################################
-					# se o valor aleatório de random.random() for maior do que 0.8 (ou seja,
+					# se o valor aleatório de random.random() for maior do que 0.7 (ou seja,
 					# tem 20 por cento de chance dos poderes aparecerem
 					#					
 					if random.random() > 0.7:
@@ -235,7 +270,12 @@ class Game:
 						if self.player1.blood < 100: # se o sangue do player for menor que 100...
 							self.player1.blood += random.randrange(10, 15)
 					if power.type == 'gun': # se o tipo do powerup tiver esse nome...
-						self.player1.double_shoot_player()
+						# if self.num_waves:
+						if self.num_waves:
+							self.player1.double_shoot_player()
+						# else:
+						# 	pass#self.player1.shoot_active = False
+						# # self.player1.double_shoot_player()
 
 
 				#################################################################################
@@ -287,15 +327,29 @@ class Game:
 				#################################################################################
 				# se não houver mais inimigos no grupo da segunda onda inimiga...
 				#
-				if len(self.group_enemy2) == 0 and len(self.wave1_meteor) == 0:
-					self.num_waves = 3 # troca para a nova onda inimiga
-					self.player1.shoot_player = 1 # RETORNA PARA O TIRO INDIVIDUAL da nave do player
-					self.group_enemy3 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
-					self.bullet_enemy3 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
-					####################################################################
-					# cria a terceira onda inimiga: wave3
-					#
-					self.createEnemies(imgBullet=dict_lasers['lasers_blue'][4], img=dict_enemies['blue'][3], listWave=wave3, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy3, groupEnemy=self.group_enemy3)
+				if len(self.group_enemy2) == 0:
+					########################################
+					# variável de controle para chamar 
+					# a próxima onda inimiga...
+					self.show_enemies_new_wave = True
+					self.num_waves = 3 # troca para a nova onda inimiga (a terceira onda inimiga)
+
+
+			############################################################
+			# se a variável de controle: self.show_enemies_new_wave, for 
+			# verdadeira e: self.num_waves, tiver o valor: 3....
+			if self.show_enemies_new_wave == True and self.num_waves == 3:
+
+				self.group_enemy3 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
+				self.bullet_enemy3 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
+				####################################################################
+				# cria a terceira onda inimiga: wave3
+				#
+				self.createEnemies(imgBullet=dict_lasers['lasers_blue'][4], img=dict_enemies['blue'][3], listWave=wave3, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy3, groupEnemy=self.group_enemy3)
+				####################################################
+				# temos que configurar a variável de controle para False
+				# quando criamos todos os inimigos na tela do pygame
+				self.show_enemies_new_wave = False
 
 
 			if self.num_waves == 3:
@@ -328,7 +382,7 @@ class Game:
 						#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
 						#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
 						#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
-						expl = Explosion(self.player1.rect.center) 
+						expl = Explosion(self.player1.rect.center, 'tiny') 
 						self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
 						self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
 						
@@ -357,6 +411,15 @@ class Game:
 					self.all_sprites.add(tinymeteor1)
 					self.all_sprites.add(tinymeteor2)
 
+					#####################################################################
+					# se o valor aleatório de random.random() for maior do que 0.7 (ou seja,
+					# tem 30 por cento de chance dos poderes aparecerem
+					#					
+					if random.random() > 0.7:
+						power = PowerupShoot(hit_meteor.rect.center)
+						self.powerupsPlayer1.add(power)
+						self.all_sprites.add(power)
+
 
 
 				########################################################
@@ -369,7 +432,12 @@ class Game:
 						if self.player1.blood < 100: # se o sangue do player for menor que 100...
 							self.player1.blood += random.randrange(10, 15)
 					if power.type == 'gun': # se o tipo do powerup tiver esse nome...
-						self.player1.double_shoot_player()
+						################################################
+						# se o número da onda inimiga atual for 
+						# igual a verdadeiro... 
+						#
+						if self.num_waves:
+						    self.player1.double_shoot_player() # chama esse método
 
 
 
@@ -413,13 +481,13 @@ class Game:
 					# explode a nave inimiga
 					#
 					expl = Explosion(enemy.rect.center, 'normal')
-					self.all_sprites.add(expl)
+					self.all_sprites.add(expl) # adiciona a explosão em: self.all_sprites
 
 				#################################################################################
 				# se não houver mais inimigos no grupo da terceira onda inimiga...
 				#
-				if len(self.group_enemy3) == 0:
-					self.num_waves = 4
+				# if len(self.group_enemy3) == 0:
+				# 	self.num_waves = 3
 					# self.group_enemy4 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
 					# self.bullet_enemy4 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
 					# # cria a terceira onda inimiga: wave3
