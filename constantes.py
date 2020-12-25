@@ -6,6 +6,19 @@ import os
 #
 path_img = os.path.join(os.path.dirname(__file__), 'img')
 
+img_ship = pygame.image.load(os.path.join(path_img, 'playerShip1_orange.png'))
+img_initial_screen = pygame.transform.scale(img_ship, (30, 30))
+
+img_laser_player = pygame.image.load(os.path.join(path_img, 'laserRed7.png'))
+img_laser_player_initial_screen_rotate = pygame.transform.rotate(img_laser_player, 90)
+img_laser_player_initial_screen = pygame.transform.scale(img_laser_player_initial_screen_rotate, (32, 8))
+
+img_ship_enemy = pygame.image.load(os.path.join(path_img, 'enemyBlack3.png'))
+img_ship_enemy_initial_screen = pygame.transform.scale(img_ship_enemy, (30, 30))
+
+img_laser_enemy = pygame.image.load(os.path.join(path_img, 'laserBlue2.png'))
+img_laser_enemy_initial_screen_rotate = pygame.transform.rotate(img_laser_enemy, 90)
+img_laser_enemy_initial_screen = pygame.transform.scale(img_laser_enemy_initial_screen_rotate, (32, 8))
 
 ##############################################
 # definindo o caminho até a imagem do player1
