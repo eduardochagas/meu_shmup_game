@@ -20,48 +20,58 @@ class Game:
 		self.clock = pygame.time.Clock()
 		self.score = 0
 
-		self.all_sprites = pygame.sprite.Group()
-		self.bullet_player1 = pygame.sprite.Group()
+		# self.all_sprites = pygame.sprite.Group()
+		# self.bullet_player1 = pygame.sprite.Group()
 
-		self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT_SCREEN)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
-		self.all_sprites.add(self.player1)
+		# self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT_SCREEN)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
+		# self.all_sprites.add(self.player1)
 
-		####################################
-		# 
-		#
-		self.powerupsPlayer1 = pygame.sprite.Group()
+		# ####################################
+		# # 
+		# #
+		# self.powerupsPlayer1 = pygame.sprite.Group()
 
-		#####################################################################
-		# cria os grupos dos primeiros inimigos
-		# cria o grupo que armazena as balas dos inimigos do primeiro grupo
-		#
-		self.group_enemy1 = pygame.sprite.Group()
-		self.bullet_enemy1 = pygame.sprite.Group() 
-		##############################################
-		# cria a primeira onda inimiga 1
-		#
-		self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0] ,img=dict_enemies['blue'][0], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy1, groupEnemy=self.group_enemy1)
-		###########################################################
-		# grupo que armazena a primeira onda de meteoros do jogo
-		#
-		self.wave1_meteor = pygame.sprite.Group()
-		########################################################
-		# variáveis que controlam as ondas de ataque inimigas
-		#
-		self.show_enemies_new_wave = False
-		self.num_waves = 1
-		#####################################################
-		# variável de controle do loop principal do jogo
-		#		
+		# #####################################################################
+		# # cria os grupos dos primeiros inimigos
+		# # cria o grupo que armazena as balas dos inimigos do primeiro grupo
+		# #
+		# self.group_enemy1 = pygame.sprite.Group()
+		# self.bullet_enemy1 = pygame.sprite.Group() 
+		# ##############################################
+		# # cria a primeira onda inimiga 1
+		# #
+		# self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0] ,img=dict_enemies['blue'][0], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy1, groupEnemy=self.group_enemy1)
+		# ###########################################################
+		# # grupo que armazena a primeira onda de meteoros do jogo
+		# #
+		# self.wave1_meteor = pygame.sprite.Group()
+		# ########################################################
+		# # variáveis que controlam as ondas de ataque inimigas
+		# #
+		# self.show_enemies_new_wave = False
+		# self.num_waves = 1
+
+		# self.initial_screen = True
+
+		# #####################################################
+		# # variável de controle do loop principal do jogo
+		# #		
 		self.running = True
+		# ##############################################
+		# # variavel de controle da tela inicial do jogo
+		self.game_over = True
+
+		
 		##############################################
 		# variavel de controle da tela inicial do jogo
-		self.game_over = True
+		self.paused = False
+
 		#######################################
 		# executa o loop do jogo
 		self.loop()
 
-		self.paused = False
+
+
 
 	
 	def loop(self):
@@ -74,12 +84,60 @@ class Game:
 			# game over sempre inicia como True
 			# 
 			if self.game_over:
+
+
+				self.all_sprites = pygame.sprite.Group()
+				self.bullet_player1 = pygame.sprite.Group()
+
+				self.player1 = PlayerShip(imgBullet=img_laser_player1, width=30, height=40, posX=20, posY=int(HEIGHT_SCREEN)/2, velocity=5, group_All_Sprites=self.all_sprites, group_Bullet=self.bullet_player1)
+				self.all_sprites.add(self.player1)
+
+				####################################
+				# 
+				#
+				self.powerupsPlayer1 = pygame.sprite.Group()
+
+				#####################################################################
+				# cria os grupos dos primeiros inimigos
+				# cria o grupo que armazena as balas dos inimigos do primeiro grupo
+				#
+				self.group_enemy1 = pygame.sprite.Group()
+				self.bullet_enemy1 = pygame.sprite.Group() 
+				##############################################
+				# cria a primeira onda inimiga 1
+				#
+				self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0] ,img=dict_enemies['blue'][0], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy1, groupEnemy=self.group_enemy1)
+				###########################################################
+				# grupo que armazena a primeira onda de meteoros do jogo
+				#
+				self.wave1_meteor = pygame.sprite.Group()
+				########################################################
+				# variáveis que controlam as ondas de ataque inimigas
+				#
+				self.show_enemies_new_wave = False
+				self.num_waves = 1
 				###############################################
-				# variável de controle do loop da tela inicial				
-				initial_screen = True
-				#################################
+				# variável de controle do loop da tela inicial	
+				self.initial_screen = True
+
+				#####################################################
+				# variável de controle do loop principal do jogo
+				#		
+				#self.running = True
+				##############################################
+				# variavel de controle da tela inicial do jogo
+				#self.game_over = True
+
+				##############################################
+				# variavel de controle da tela inicial do jogo
+				self.paused = False
+
+
+
+
 				# enquanto tela inicial for True...
-				while initial_screen:
+				while self.initial_screen:
+
 					############################################################
 					# tbm definimos o controle de FPS na tela inicial 
 					# do jogo. Isso AJUDA A CONTROLAR A TAXA DE ATUALIZAÇÕES
@@ -114,7 +172,7 @@ class Game:
 				    			###########################################################
 				    			# definimos a variável de controle do loop da tela inicial
 				    			# para false, saindo do loop da tela inicial
-					    		initial_screen = False 
+					    		self.initial_screen = False 
 					    		#################################################
 					    		# definimos a propriedade que entra para o loop
 					    		# da tela inicial para: False
@@ -160,10 +218,23 @@ class Game:
 				    #  UMA TELA INICIAL BÀSICA para um jogo. 
 				    #
 				    #  Quando definimos O COMPORTAMENTO DE APERTARMOS 
-				    #  UMA TECLA para INSERIRMOS UM NOVO CONTEÚDO NA TELA, temos tbm que DEFINIR UM
-				    #  METODO DE ATUALIZAÇÃO DE TELA para que TODAS AS INFORMAÇÕES ATUAL DA TELA
-				    #  SEJA LIMPA para que AS PROXIMAS INFORMAÇÕES CONFIGURADAS PARA SEREM INSERIDAS 
-				    #  NA TELA POSSAM DE FATO SER INSERIDAS NA TELA. isso é o que fizemos 
+				    #  UMA TECLA para INSERIRMOS UM NOVO CONTEÚDO NA TELA, temos tbm que INSERIR UM
+				    #  METODO DE ATUALIZAÇÃO DE TELA para que TODAS AS INFORMAÇÕES que queremos 
+				    #  inserir na tela possam ser inseridas na tela. Se a tela já possui 
+				    #  conteúdo sendo exibido, e vc quer limpar esses conteúdos atuais da tela para
+				    #  inserir um novo conteudo, é necessário usar os métodos abaixo:
+				    #
+				    #    # limpa os conteúdos da tela
+				    #    self.screen.fill(BLACK)  
+				    #
+				    #    # atualiza a tela para poder exibir um novo conteúdo
+				    #    pygame.display.flip()   
+				    #
+				    #    # exibe um novo conteúdo na tela
+				    #    self.drawText(self.screen, int(WIDTH/2), int(HEIGHT/2), 'um texto qualquer', 60, YELLOW) 
+				    #
+				    #  OU SEJA, LIMPA A TELA para que AS PROXIMAS INFORMAÇÕES CONFIGURADAS PARA SEREM 
+				    #  INSERIDAS NA TELA POSSAM DE FATO SER INSERIDAS NA TELA. isso é o que fizemos 
 				    #  dentro do bloco da linha: 
 				    #
 				    #    if event.key == pygame.K_SPACE:
@@ -191,19 +262,20 @@ class Game:
 				# exibe o número de onda inimiga que está atacando no momento 
 				self.drawText(self.screen, WIDTH/2, 100, 'Wave: '+str(self.num_waves), 25, YELLOW)
 
-				###########################################################
-				# *********************************************************
-				# metodo que possui a mecanica que PAUSA e DESPAUSA o jogo
-				# *********************************************************
-				self.pausedGame()
 
 				#################################################################################
 				# desenha todas as sprites na tela do jogo
 				self.all_sprites.draw(self.screen)
 
+				self.pausedGame()
 				#################################################################################
 				# chama todos os métodos update() de cada objeto do grupo self.all_sprites
 				self.all_sprites.update()
+
+				###########################################################
+				# *********************************************************
+				# metodo que possui a mecanica que PAUSA e DESPAUSA o jogo
+				# *********************************************************
 
 				#############################
 				# primeira onda inimiga
@@ -230,8 +302,8 @@ class Game:
 							self.player1.blood = 0
 							###################################################
 							# atribui a imagem do player na classe de explosão
-							expl = Explosion(self.player1.rect.center, 'normal') 
-							self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+							death_explosion = Explosion(self.player1.rect.center, 'normal') 
+							self.all_sprites.add(death_explosion) # adiciona a classe explosão em self.all_sprites
 							self.player1.hide() # esconde a imagem do player, da tela do pygame
 
 					################################################################
@@ -329,8 +401,8 @@ class Game:
 							#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
 							#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
 							#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
-							expl = Explosion(self.player1.rect.center, 'normal') 
-							self.all_sprites.add(expl) # adiciona a classe explosão em: self.all_sprites
+							death_explosion = Explosion(self.player1.rect.center, 'normal') 
+							self.all_sprites.add(death_explosion) # adiciona a classe explosão em: self.all_sprites
 							self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
 							
 
@@ -364,7 +436,7 @@ class Game:
 
 						#####################################################################
 						# se o valor aleatório de random.random() for maior do que 0.7 (ou seja,
-						# tem 20 por cento de chance dos poderes aparecerem
+						# tem 30 por cento de chance dos poderes aparecerem
 						#					
 						if random.random() > 0.7:
 							power = PowerupShoot(hit_meteor.rect.center)
@@ -420,8 +492,8 @@ class Game:
 							#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
 							#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
 							#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
-							expl = Explosion(self.player1.rect.center, 'normal')
-							self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites 
+							death_explosion = Explosion(self.player1.rect.center, 'normal')
+							self.all_sprites.add(death_explosion) # adiciona a classe explosão em self.all_sprites 
 							self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
 							
 
@@ -494,8 +566,8 @@ class Game:
 							#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
 							#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
 							#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
-							expl = Explosion(self.player1.rect.center, 'tiny') 
-							self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+							death_explosion = Explosion(self.player1.rect.center, 'tiny') 
+							self.all_sprites.add(death_explosion) # adiciona a classe explosão em self.all_sprites
 							self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
 							
 
@@ -553,6 +625,30 @@ class Game:
 
 
 
+					################################################################
+					# checa a colisão das balas do player com as balas dos inimigos
+					#
+					hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy3, True, True)
+					for enemy in hit_enemy:
+						self.player1.score += 1
+						################################################
+						# explode a nave inimiga
+						#
+						expl = Explosion(enemy.rect.center, 'normal')
+						self.all_sprites.add(expl) # adiciona a explosão em: self.all_sprites
+
+					#################################################################################
+					# se não houver mais inimigos no grupo da terceira onda inimiga...
+					#
+					# if len(self.group_enemy3) == 0:
+					# 	self.num_waves = 3
+						# self.group_enemy4 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
+						# self.bullet_enemy4 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
+						# # cria a terceira onda inimiga: wave3
+						# self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0], img=dict_enemies['red'][1], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy4, groupEnemy=self.group_enemy4)
+
+
+
 					#################################################################################
 					# checa a colisão do player1 com AS BALAS da primeira onda inimiga do jogo 
 					#
@@ -578,36 +674,104 @@ class Game:
 							#  É POR ISSO QUE QUANDO OCORRE A EXPLOSÃO, CONSEGUIMOS
 							#  MOVER A IMAGEM DO PLAYER PARA UM OUTRO LUGAR FORA DA 
 							#  TELA QUANDO USAMOS O MÈTODO: self.player1.hide()
-							expl = Explosion(self.player1.rect.center, 'normal') 
-							self.all_sprites.add(expl) # adiciona a classe explosão em self.all_sprites
+							death_explosion = Explosion(self.player1.rect.center, 'normal') 
+							self.all_sprites.add(death_explosion) # adiciona a classe explosão em self.all_sprites
 							self.player1.hide() # esconde a imagem da nave do nosso player quando acaba o sangue de cada vida do player.
 							
 
-					################################################################
-					# checa a colisão das balas do player com as balas dos inimigos
-					#
-					hit_enemy = pygame.sprite.groupcollide(self.bullet_player1, self.group_enemy3, True, True)
-					for enemy in hit_enemy:
-						self.player1.score += 1
-						################################################
-						# explode a nave inimiga
-						#
-						expl = Explosion(enemy.rect.center, 'normal')
-						self.all_sprites.add(expl) # adiciona a explosão em: self.all_sprites
 
-					#################################################################################
-					# se não houver mais inimigos no grupo da terceira onda inimiga...
-					#
-					# if len(self.group_enemy3) == 0:
-					# 	self.num_waves = 3
-						# self.group_enemy4 = pygame.sprite.Group() # cria o grupo da segunda onda inimiga..
-						# self.bullet_enemy4 = pygame.sprite.Group() # cria o grupo das balas da segunda onda inimiga
-						# # cria a terceira onda inimiga: wave3
-						# self.createEnemies(imgBullet=dict_lasers['lasers_blue'][0], img=dict_enemies['red'][1], listWave=wave1, groupAll_sprites=self.all_sprites, groupBullet=self.bullet_enemy4, groupEnemy=self.group_enemy4)
+				################################################################################################################################
+				# se em qualquer uma das ondas AND as vidas do player for 0 AND as imagens da esplosão do player acabarem de ser executadas...
+				if (self.num_waves == 1 or self.num_waves == 2 or self.num_waves == 3) and self.player1.lives == 0 and not death_explosion.alive():
+					#######################################
+					# removemos a imagem do player da tela
+					self.player1.kill()
+					####################################
+					# abrimos o arquivo: score.txt
+					arquivo = open('score.txt', 'r')
+					#########################################################################
+					# assim que lemos o arquivo, ja temos que converter o dado para inteiro,
+					# para podermos usar esse dado em uma estrutura condicional. Se vc tentar
+					# fazer de um jeito diferente, não vai funcionar.
+					data = int(arquivo.readline())
+					#################################
+					# temos que fechar o arquivo.
+					arquivo.close()
+
+					##########################################
+					# variável de controle do loop de exibição 
+					# do score feito pelo player1
+					end_game = True
+					#################################
+					# se end_game for verdadeiro....
+					while end_game:
+						
+						###############################
+						# define os frames do loop
+						self.clock.tick(FPS)
+						############################################################
+						# atualiza a tela para inserir novas informações na tela
+						pygame.display.flip()
+
+						###########################################################################################
+						# se o dado for igual a zero OR self.player1.score for menor ou igual ao valor de data... 
+						if self.player1.score == 0 and data == 0:
+							##############################################
+							# insere na tela a pontuação feita
+							self.drawText(self.screen, WIDTH/2, HEIGHT/2, 'score: '+str(self.player1.score), 30, YELLOW)
+
+						########################################################################################
+						# quando a pontuação do player for 1 AND o dado no arquivo score.txt for igual a zero...
+						elif self.player1.score == 1 and data == 0:							
+							##############################################
+							# insere na tela a pontuação feita
+							self.drawText(self.screen, WIDTH/2, HEIGHT/2, 'newRecordScore: '+str(self.player1.score), 40, YELLOW)
+							##################################################
+							# abre o arquivo score.txt em modo gravação (w)
+							arquivo = open('score.txt', 'w')
+							############################################################
+							# grava no arquivo score.txt o valor da pontuação 
+							arquivo.write(str(self.player1.score))
+							#############################################################
+							# fecha o arquivo score.txt depois de grava a pontuação nele
+							arquivo.close()
 
 
+						##############################################################################
+						# se a pontuação do player1 for MENOR OU IGUAL ao dado do arquivo score.txt...
+						elif self.player1.score <= data:
+							##############################################
+							# insere na tela a pontuação feita
+							self.drawText(self.screen, WIDTH/2, HEIGHT/2, 'sscore: '+str(self.player1.score), 40, YELLOW)
+
+						##############################################################################
+						# se a pontuação do player1 for MAIOR que o dado do arquivo score.txt...
+						elif self.player1.score > data:
+							##############################################
+							# insere na tela a pontuação feita
+							self.drawText(self.screen, WIDTH/2, HEIGHT/2, 'New Record Score: '+str(self.player1.score), 40, YELLOW)
+							##################################################
+							# abre o arquivo score.txt em modo gravação (w)
+							arquivo = open('score.txt', 'w')
+							############################################################
+							# grava no arquivo score.txt o valor da pontuação 
+							arquivo.write(str(self.player1.score))
+							#############################################################
+							# fecha o arquivo score.txt depois de grava a pontuação nele
+							arquivo.close()
 
 
+						for event in pygame.event.get():
+							if event.type == pygame.QUIT:
+								pygame.quit()
+								exit()
+							if event.type == pygame.KEYUP:
+								if event.key == pygame.K_SPACE:
+									self.screen.fill(BLACK)
+									end_game = False
+									self.game_over = True
+									self.initial_screen = True
+									pygame.display.flip()
 
 
 
@@ -655,6 +819,9 @@ class Game:
 									self.paused = False
 						pygame.display.flip()
 
+
+	######################################################
+	# desenha as imagens da tela inicial do jogo...
 	def drawImagesScreenPrincipal(self, img, centerx, centery):
 
 		rect = img.get_rect()
@@ -663,6 +830,8 @@ class Game:
 
 		self.screen.blit(img, (rect.centerx, rect.centery))
 
+	#############################################################
+	# cria o painel do player1 na parte superior da tela do jogo
 	def createPanelPlayer(self, screen):
 		surf = pygame.Surface((WIDTH, HEIGHT_PANEL_PLAYER))
 		surf.fill(GREY_DARK)
@@ -696,7 +865,8 @@ class Game:
 
 		self.DrawScore(self.screen, posX, posY+HEIGHT_BLOOD_BAR+GAP_BETWEEN_BLOOD_AND_SCORE, 'score:'+str(self.player1.score), 20, BLUE_TURKEY)
 
-
+	###############################################################
+	# desenha o score do player1 na barra superior da tela do jogo...
 	def DrawScore(self, screen, posX, posY, text, sizeText, color):
 		font_default = pygame.font.get_default_font()
 		font = pygame.font.Font(font_default, sizeText)
@@ -715,7 +885,7 @@ class Game:
 		self.DrawImageLifes(screen, posX, posY+25, array_img) # desenha essas representações da imagem de vida do player1 na tela
 
 	#############################################################
-	# método temporário...
+	# desenha as imagens das vidas do player
 	def DrawImageLifes(self, screen, posX, posY, listImages):
 		i = 0
 		gap_between_images = 10
@@ -736,7 +906,8 @@ class Game:
 			self.player1.lives -= 1
 			self.player1.blood = 100
 
-
+	##############################################################
+	# desenha o nome do player1 na barra superior da tela do jogo
 	def drawText(self, screen, posX, posY, text, sizeText, color):
 		font_default = pygame.font.get_default_font()
 		font = pygame.font.Font(font_default, sizeText)
@@ -762,7 +933,8 @@ class Game:
 		# insere na tela o texto renderizado
 		screen.blit(font_render, (centerText_X,  centerText_Y))
 
-			
+	#################################################
+	# cria as naves inimigas do jogo
 	def createEnemies(self, imgBullet, img, listWave, groupAll_sprites, groupBullet, groupEnemy):
 
 		for lista in listWave:
@@ -773,12 +945,15 @@ class Game:
 				groupAll_sprites.add(e) # adiciona o inimigo ao grupo que contêm todos os objetos do jogo
 
 
+	###########################################
+	# cria os meteoros do jogo
 	def createMeteors(self, num, groupMeteor, all_sprites):
 
 		for i in range(num):
 			m = Meteor(array_meteors, random.randrange(WIDTH, WIDTH+800), random.randrange(HEIGHT_PANEL_PLAYER, HEIGHT))
 			groupMeteor.add(m)
 			all_sprites.add(m)
+
 
 # inicia o jogo
 if __name__ == '__main__':

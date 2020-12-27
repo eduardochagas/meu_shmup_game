@@ -21,7 +21,7 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.last_update = pygame.time.get_ticks()
 		self.score = 0
 		self.blood = 100
-		self.lives = 4
+		self.lives = 1
 		self.imgBullet = imgBullet
 		self.hidden = False
 		self.hidde_timer = 0
