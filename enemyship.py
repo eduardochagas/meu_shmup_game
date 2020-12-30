@@ -1,5 +1,5 @@
 import pygame
-from constantes import *
+from constants import *
 from bullet import Bullet
 
 class EnemyShip(pygame.sprite.Sprite):
@@ -23,11 +23,12 @@ class EnemyShip(pygame.sprite.Sprite):
 
 	def update(self):
 
+
 		self.rect.x -= self.velocity
 
 		now = pygame.time.get_ticks()
 		if now - self.last_update > 1050:
-			self.last_update = now 
+			self.last_update = now
 			self.shoot()
 
 		if self.rect.right < -300:
@@ -41,6 +42,7 @@ class EnemyShip(pygame.sprite.Sprite):
 		self.mask = pygame.mask.from_surface(self.image)
 
 	def shoot(self):
+
 
 		bullet = Bullet(self.imgBullet, 10, 5, self.rect.midleft, 10, 'left')
 		self.group_all_sprites.add(bullet)

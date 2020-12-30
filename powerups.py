@@ -1,9 +1,9 @@
 import pygame
 import random
-from constantes import *
+from constants import *
 
 
-class Power(pygame.sprite.Sprite):
+class Powerups(pygame.sprite.Sprite):
 
 	def __init__(self, rectCenter):
 		pygame.sprite.Sprite.__init__(self)
@@ -15,7 +15,12 @@ class Power(pygame.sprite.Sprite):
 
 	def update(self):
 
-		self.rect.centerx -= 5
+		self.rect.centerx -= 4
+
+
+	def update(self):
+
+		self.rect.centerx -= 4
 
 
 

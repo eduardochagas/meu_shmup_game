@@ -1,5 +1,5 @@
 import pygame
-from constantes import *
+from constants import *
 from bullet import Bullet
 
 
@@ -21,7 +21,7 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.last_update = pygame.time.get_ticks()
 		self.score = 0
 		self.blood = 100
-		self.lives = 1
+		self.lives = 4
 		self.imgBullet = imgBullet
 		self.hidden = False
 		self.hidde_timer = 0
@@ -40,7 +40,8 @@ class PlayerShip(pygame.sprite.Sprite):
 		self.power_time = pygame.time.get_ticks()
 		##################################################
 		# variável de controle do tipo dos tiros...
-		self.type_shoot_player = 1  
+		self.type_shoot_player = 1 
+		self.turn_shoot_to_one = False 
 
 
 		
@@ -48,6 +49,13 @@ class PlayerShip(pygame.sprite.Sprite):
 
 
 	def update(self):
+
+		###################################################
+		# troca o tiro duplo para o de tiro único
+		# quando estamos com o tiro duplo e morremos...
+		if self.turn_shoot_to_one == True:
+			self.type_shoot_player = 1
+			self.turn_shoot_to_one = False
 
 		#####################################################################
 		# verifica se o valor de self.type_shoot_player (que é a variável
@@ -116,6 +124,11 @@ class PlayerShip(pygame.sprite.Sprite):
 
 
 	def shoot(self):
+		#########################################
+		# inserimos o som de tiro do player no
+		# canal 0 do nosso mixer no pygame
+		pygame.mixer.Channel(0).play(sound_shoot)
+
 		if self.type_shoot_player == 1:
 			bullet = Bullet(self.imgBullet, 10, 5, self.rect.midright, 10, 'right')
 			self.group_all_sprites.add(bullet)

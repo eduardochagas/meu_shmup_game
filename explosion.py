@@ -1,5 +1,5 @@
 import pygame
-from constantes import *
+from constants import *
 
 
 class Explosion(pygame.sprite.Sprite):
@@ -12,9 +12,10 @@ class Explosion(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.rect.center = rectCenter
 		self.last_update = pygame.time.get_ticks()
+		sound_explosion_tiny.play()
 
 
-	def update(self):
+	def update(self):		
 
 		####################################################
 		# Faz o controle da troca de imagens de explosão
@@ -26,5 +27,8 @@ class Explosion(pygame.sprite.Sprite):
 			self.image = explosions[self.sizeExplosion][self.frame]
 			if self.frame == len(explosions[self.sizeExplosion])-1:
 				self.kill()
+
+
+
 
 
