@@ -16,7 +16,7 @@ o jogo **possui 12 ondas inimigas** e o objetivo do jogo é **fazer a maior pont
 
 * __teclas de controle__ do jogo
 
-  * teclas: __seta cima, seta baixo, seta direita, seta esquerda__ -> controla os **movimentos da nave** do jogo
+  * teclas: __a, w, s, d__ -> controla os **movimentos da nave** do jogo
 
   * tecla: __space__ -> **inicia o jogo**
 
