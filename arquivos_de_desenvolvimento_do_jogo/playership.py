@@ -104,16 +104,16 @@ class PlayerShip(pygame.sprite.Sprite):
 	def control(self):
 		keys = pygame.key.get_pressed()
 
-		if keys[pygame.K_w]:
+		if keys[pygame.K_UP]:
 			self.rect.y -= self.velocity
 
-		if keys[pygame.K_s]:
+		if keys[pygame.K_DOWN]:
 			self.rect.y += self.velocity
 
-		if keys[pygame.K_a]:
+		if keys[pygame.K_LEFT]:
 			self.rect.x -= self.velocity
 
-		if keys[pygame.K_d]:
+		if keys[pygame.K_RIGHT]:
 			self.rect.x += self.velocity
 
 		if keys[pygame.K_SPACE]:
